@@ -17,6 +17,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.util.Base64;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -84,6 +85,29 @@ public class HelloController {
         return "redirect:/";
     }
 
+
+    @GetMapping("/exams")
+    public String conferences(Model model, HttpServletRequest request) {
+        var session = request.getSession();
+        if (session != null && session.getAttribute("access_token") != null) {
+            try {
+                var exams = this.restClient.get()
+                        .uri("http://localhost:8081/exams?userId")
+                        .header("authorization", "Bearer " + session.getAttribute("access_token"))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .retrieve()
+                        .body(List.class);
+                model.addAttribute("exams", exams);
+            } catch (Exception e) {
+                model.addAttribute("error", "Error while getting conferences: " + e.getMessage());
+            }
+
+            return "exams";
+        }
+
+        return "redirect:/";
+    }
+
     @GetMapping("/oauth2/callback")
     public String oauth2Callback(@RequestParam String code, HttpServletRequest request) throws IOException {
         log.info("authorization_code: " + code);
@@ -114,7 +138,9 @@ public class HelloController {
 
         var session = request.getSession(true);
         session.setAttribute("username", decodedPayload.get("name"));
-        request.getSession().setAttribute("attributes", decodedPayload);
+        session.setAttribute("attributes", decodedPayload);
+        session.setAttribute("access_token", parsedResponse.accessToken());
+
         return "redirect:/";
     }
 
