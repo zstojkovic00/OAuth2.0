@@ -1,6 +1,8 @@
 package singidunum.rs.client;
 
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.IOException;
 import java.util.Base64;
 import java.util.Map;
 import java.util.UUID;
@@ -23,6 +26,7 @@ import java.util.logging.Logger;
 public class HelloController {
 
     private final RestClient restClient;
+    private final ObjectMapper objectMapper = new ObjectMapper();
     private static final Logger log = Logger.getLogger(HelloController.class.getName());
 
     @Value("${client.id}")
@@ -32,6 +36,7 @@ public class HelloController {
 
     public HelloController() {
         this.restClient = RestClient.create();
+        this.objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     @GetMapping("/")
@@ -80,24 +85,36 @@ public class HelloController {
     }
 
     @GetMapping("/oauth2/callback")
-    public String oauth2Callback(@RequestParam String code) {
+    public String oauth2Callback(@RequestParam String code, HttpServletRequest request) throws IOException {
         log.info("authorization_code: " + code);
         // form encoded URL string
-        var payload = new LinkedMultiValueMap<String, String>();
-        payload.add("code", code);
-        payload.add("grant_type", "authorization_code");
-        payload.add("redirect_uri", "http://localhost:8080/oauth2/callback");
+        var body = new LinkedMultiValueMap<String, String>();
+        body.add("code", code);
+        body.add("grant_type", "authorization_code");
+        body.add("redirect_uri", "http://localhost:8080/oauth2/callback");
 
 
         String token = restClient.post()
                 .uri("https://dev-80556277.okta.com/oauth2/default/v1/token")
                 .header("Authorization", "Basic " + getCredentials())
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .body(payload)
+                .body(body)
                 .retrieve()
                 .body(String.class);
 
         log.info("Token response: " + token);
+        var parsedResponse = objectMapper.readValue(token, TokenResponse.class);
+        log.info("token id: " + parsedResponse.idToken());
+
+        String[] tokenParts = parsedResponse.idToken().split("\\.");
+        byte[] payload = Base64.getUrlDecoder().decode(tokenParts[1]);
+        log.info("payload: " + new String(payload));
+
+        var decodedPayload = objectMapper.readValue(payload, Map.class);
+
+        var session = request.getSession(true);
+        session.setAttribute("username", decodedPayload.get("name"));
+        request.getSession().setAttribute("attributes", decodedPayload);
         return "redirect:/";
     }
 
