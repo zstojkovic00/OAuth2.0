@@ -1,0 +1,74 @@
+body {
+  font-family: Metropolis, Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card {
+  border: 1px solid #bbb;
+  border-radius: 5px;
+  overflow: hidden;
+
+  min-width: 400px;
+  max-width: 750px;
+  min-height: 400px;
+
+  display: grid;
+  grid-template-rows: 100px 1fr auto;
+}
+
+.header {
+  background-color: #f1cc26;
+  background-image: url("https://shorturl.at/invMY");
+  background-position: right;
+  background-size: contain;
+  background-repeat: no-repeat;
+  display: inline-block;
+  width: 100%;
+  color: white;
+  height: 75px;
+}
+
+.header > h1 {
+  color: black;
+  margin-top: 5px;
+  padding-left: 10px;
+}
+
+.content {
+  padding: 0 20px;
+  align-self: start;
+}
+
+.footer {
+  padding: 20px;
+}
+
+button, .button {
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  background: #f1cc26;
+  font-weight: bold;
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  margin-right: 10px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th, td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
