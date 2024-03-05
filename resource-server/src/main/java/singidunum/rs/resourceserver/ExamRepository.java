@@ -17,6 +17,8 @@ public class ExamRepository {
     public ExamRepository() {
         this.exams = new LinkedMultiValueMap<>();
         exams.add("zstojkovic00@github.oktaidp", new Exam("RSD1CC", "Cloud computing", 98.00, 10, LocalDate.of(2023, Month.JANUARY, 23), "Nebojša Bačanin Džakula"));
+        exams.add("zstojkovic00@github.oktaidp", new Exam("RSD1CC", "Cloud computing", 98.00, 10, LocalDate.of(2023, Month.JANUARY, 23), "Nebojša Bačanin Džakula"));
+        exams.add("zstojkovic00@github.oktaidp", new Exam("RSD1CC", "Cloud computing", 98.00, 10, LocalDate.of(2023, Month.JANUARY, 23), "Nebojša Bačanin Džakula"));
         exams.add("-1", new Exam("RSD1CC", "Cloud computing", 98.00, 10, LocalDate.of(2022, Month.JANUARY, 23), "Nebojša Bačanin Džakula"));
 
     }
