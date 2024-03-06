@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestClient;
@@ -47,7 +46,7 @@ public class OktaController {
         var body = new LinkedMultiValueMap<String, String>();
         body.add("code", code);
         body.add("grant_type", "authorization_code");
-        body.add("redirect_uri", "http://localhost:8080/oauth2/callback");
+        body.add("redirect_uri", "http://localhost:3000");
 
         String token = restClient.post()
                 .uri("https://dev-80556277.okta.com/oauth2/default/v1/token")
@@ -80,25 +79,25 @@ public class OktaController {
         return Base64.getUrlEncoder().encodeToString(credentialsString.getBytes());
     }
 
-    @GetMapping("/exams")
-    public String conferences(Model model, HttpServletRequest request) {
-        var session = request.getSession();
-        if (session != null && session.getAttribute("access_token") != null) {
-            try {
-                var exams = this.restClient.get()
-                        .uri("http://localhost:8081/exams?userId")
-                        .header("authorization", "Bearer " + session.getAttribute("access_token"))
-                        .accept(MediaType.APPLICATION_JSON)
-                        .retrieve()
-                        .body(List.class);
-                model.addAttribute("exams", exams);
-            } catch (Exception e) {
-                model.addAttribute("error", "Error while getting conferences: " + e.getMessage());
-            }
-
-            return "exams";
-        }
-
-        return "redirect:/";
-    }
+//    @GetMapping("/exams")
+//    public String conferences(Model model, HttpServletRequest request) {
+//        var session = request.getSession();
+//        if (session != null && session.getAttribute("access_token") != null) {
+//            try {
+//                var exams = this.restClient.get()
+//                        .uri("http://localhost:8081/exams?userId")
+//                        .header("authorization", "Bearer " + session.getAttribute("access_token"))
+//                        .accept(MediaType.APPLICATION_JSON)
+//                        .retrieve()
+//                        .body(List.class);
+//                model.addAttribute("exams", exams);
+//            } catch (Exception e) {
+//                model.addAttribute("error", "Error while getting conferences: " + e.getMessage());
+//            }
+//
+//            return "exams";
+//        }
+//
+//        return "redirect:/";
+//    }
 }

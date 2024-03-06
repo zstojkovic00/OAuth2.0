@@ -1,32 +1,33 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from "axios";
-import { useOktaAuth } from '@okta/okta-react';
 
 const Home = () => {
-
     const clientId = process.env.REACT_APP_CLIENT_ID;
-    console.log(process.env.REACT_APP_CLIENT_ID);
-
     const loginUri = `https://dev-80556277.okta.com/oauth2/default/v1/authorize?redirect_uri=http://localhost:3000&response_type=code&state=12345&scope=openid email profile&client_id=${clientId}`;
     const [user, setUser] = useState(null);
 
-
     useEffect(() => {
-        const params = new URLSearchParams(window.location.search);
-        const code = params.get('code');
-
-        if (code) {
-            axios.get(`http://localhost:8080/oauth2/callback"?code=${code}`)
-                .then(response => {
-                    const user = response.data;
-                    console.log(user)
-                    localStorage.setItem('session', JSON.stringify(user));
-                    setUser(user);
-                })
-                .catch(error => {
-                    console.error('Error fetching token:', error);
-                });
-        }
+        const fetchUser = async () => {
+            const storedUser = localStorage.getItem('session');
+            if (storedUser) {
+                setUser(JSON.parse(storedUser));
+            } else {
+                const params = new URLSearchParams(window.location.search);
+                const code = params.get('code');
+                if (code) {
+                    try {
+                        const response = await axios.get(`http://localhost:8080/oauth2/callback?code=${code}`);
+                        const user = response.data;
+                        console.log(response.data)
+                        localStorage.setItem('session', JSON.stringify(user));
+                        setUser(user);
+                    } catch (error) {
+                        console.error('Error fetching token:', error);
+                    }
+                }
+            }
+        };
+        fetchUser();
     }, []);
 
     const handleLogin = () => {
@@ -42,8 +43,6 @@ const Home = () => {
         localStorage.setItem('session', JSON.stringify(hardcodedUser));
         setUser(hardcodedUser);
     };
-
-
 
     const handleLogout = () => {
         localStorage.removeItem('session');
@@ -62,7 +61,7 @@ const Home = () => {
                 <footer className="footer">
                     <h3>Login with:</h3>
                     <button onClick={handleLogin}>Hardcoded User</button>
-                    <a className="button" href={loginUri}> OAuth2.0</a>
+                    <a className="button" href={loginUri}>OAuth2.0</a>
                 </footer>
             </div>
         );
