@@ -1,18 +1,31 @@
 import React, {useState, useEffect} from 'react';
+import axios from "axios";
+import { useOktaAuth } from '@okta/okta-react';
 
 const Home = () => {
 
     const clientId = process.env.REACT_APP_CLIENT_ID;
     console.log(process.env.REACT_APP_CLIENT_ID);
 
-    const loginUri = `https://dev-80556277.okta.com/oauth2/default/v1/authorize?redirect_uri=http://localhost:8080/oauth2/callback&response_type=code&state=12345&scope=openid email profile&client_id=${clientId}`;
-
+    const loginUri = `https://dev-80556277.okta.com/oauth2/default/v1/authorize?redirect_uri=http://localhost:3000&response_type=code&state=12345&scope=openid email profile&client_id=${clientId}`;
     const [user, setUser] = useState(null);
 
+
     useEffect(() => {
-        const session = JSON.parse(localStorage.getItem('session'));
-        if (session && session.username) {
-            setUser(session);
+        const params = new URLSearchParams(window.location.search);
+        const code = params.get('code');
+
+        if (code) {
+            axios.get(`http://localhost:8080/oauth2/callback"?code=${code}`)
+                .then(response => {
+                    const user = response.data;
+                    console.log(user)
+                    localStorage.setItem('session', JSON.stringify(user));
+                    setUser(user);
+                })
+                .catch(error => {
+                    console.error('Error fetching token:', error);
+                });
         }
     }, []);
 
@@ -29,6 +42,8 @@ const Home = () => {
         localStorage.setItem('session', JSON.stringify(hardcodedUser));
         setUser(hardcodedUser);
     };
+
+
 
     const handleLogout = () => {
         localStorage.removeItem('session');
