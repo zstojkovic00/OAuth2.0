@@ -18,8 +18,9 @@ const Home = () => {
                     try {
                         const response = await axios.get(`http://localhost:8080/oauth2/callback?code=${code}`);
                         const user = response.data;
-                        console.log(response.data)
+                        const accessToken = response.data.access_token
                         localStorage.setItem('session', JSON.stringify(user));
+                        localStorage.setItem('access_token', JSON.stringify(accessToken))
                         setUser(user);
                     } catch (error) {
                         console.error('Error fetching token:', error);
@@ -27,6 +28,7 @@ const Home = () => {
                 }
             }
         };
+
         fetchUser();
     }, []);
 
@@ -46,6 +48,7 @@ const Home = () => {
 
     const handleLogout = () => {
         localStorage.removeItem('session');
+        localStorage.removeItem("access_token")
         setUser(null);
     };
 

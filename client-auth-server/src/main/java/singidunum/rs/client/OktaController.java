@@ -3,14 +3,15 @@ package singidunum.rs.client;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestClient;
 
@@ -26,15 +27,15 @@ public class OktaController {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private static final Logger log = Logger.getLogger(OktaController.class.getName());
 
-    @Value("${client.id}")
-    private String clientId;
-    @Value("${client.secret.id}")
-    private String clientSecret;
-
     public OktaController() {
         this.restClient = RestClient.create();
         this.objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
+
+    @Value("${client.id}")
+    private String clientId;
+    @Value("${client.secret.id}")
+    private String clientSecret;
 
     @GetMapping("/oauth2/callback")
     public ResponseEntity<Map<String, Object>> oauth2Callback(@RequestParam String code) throws IOException {
@@ -79,25 +80,27 @@ public class OktaController {
         return Base64.getUrlEncoder().encodeToString(credentialsString.getBytes());
     }
 
-//    @GetMapping("/exams")
-//    public String conferences(Model model, HttpServletRequest request) {
-//        var session = request.getSession();
-//        if (session != null && session.getAttribute("access_token") != null) {
-//            try {
-//                var exams = this.restClient.get()
-//                        .uri("http://localhost:8081/exams?userId")
-//                        .header("authorization", "Bearer " + session.getAttribute("access_token"))
-//                        .accept(MediaType.APPLICATION_JSON)
-//                        .retrieve()
-//                        .body(List.class);
-//                model.addAttribute("exams", exams);
-//            } catch (Exception e) {
-//                model.addAttribute("error", "Error while getting conferences: " + e.getMessage());
-//            }
-//
-//            return "exams";
-//        }
-//
-//        return "redirect:/";
-//    }
+    @GetMapping("/exams")
+    public ResponseEntity<List<Exam>> exams(@RequestHeader("Authorization") String auth) {
+        try {
+            if (auth == null || !auth.startsWith("Bearer ")) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+
+            String accessToken = auth.substring(7).replace("\"", "");
+
+            List<Exam> exams = this.restClient.get()
+                    .uri("http://localhost:8081/exams?userId")
+                    .header("authorization", "Bearer " + accessToken)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .retrieve()
+                    .body(new ParameterizedTypeReference<>() {});
+
+            return new ResponseEntity<>(exams, HttpStatus.OK);
+        } catch (Exception e) {
+            log.severe("Error while getting exams: " + e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
+
