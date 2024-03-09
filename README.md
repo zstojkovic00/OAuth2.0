@@ -15,7 +15,7 @@ Finally, the access token is used to access resources exposed by the resource se
 - api-url: ``` localhost:8080/oauth2/callback?code={code} ```
 - Requires @RequestParam String code: authorization code
 - Returns user details information
-    ``` json
+    ```
   access_token: "eyJraWQiOiJZMHpua1pQTDJWVUZDMXlkcENYR1RIc1J1NlE4aDRJOUJFdXdxYnBldk1RIiwiYWxnIjoiUlMyNTYifQ.eyJ2ZXIiOjEsImp0aSI6IkFULmJadDNYTEl4MmRwWVB1eTlpby1kTEVlQms4Zl9WbHFOcUFRVjBfbVc0UzgiLCJpc3MiOiJodHRwczovLKRldi04MDU1NjI3Ny5va3RhLmNvbS9vYXV0aDIvZGVmYXVsdCIsImF1ZCI6ImFwaTovL2RlZmF1bHQiLCJpYXQiOjE3MTAwMjE4ODgsImV4cCI6MTcxMDAyNTQ4OCwiY2lkIjoiMG9hZmk3eTloOFRvSVg0eE01ZDciLCJ1aWQiOiIwMHVmb21tOWlmZWMyeVNMNTVkNyIsInNjcCI6WyJzaW5naWR1bnVtLnJlYWQiLCJwcm9maWxlIiwiZW1haWwiLCJvcGVuaWQiXSwiYXV0aF90aW1lIjoxNzEwMDIxODI5LCJzdWIiOiIwMHplbGprb3N0b2prb3ZpY0BnbWFpbC5jb20ifQ.TkVw48D5mMMmjfWD7hn-Tt4Nb_clJsqaCGGxtSLjRQwYG1xPWyoeLlL86Sds3-B-2dYUv72UCmrDUTmH0kWAOdCpZbv-LJAoCfKKF-heW5u9RxUuqqbU7UCZYYA243ekdH27MsdHxIS8FXJtkdqSCdzChBjSuaR7vf05mCoSUl8H0luK1NaToTk4aOG6gF3o8l69g1XtIkzRGG1Y5jZARdqnJCp_iyK8-ejmUM8xwETZ5I-wDSqS434tIgOhASR2Y_XW9rlyQY3g9z4-eXrCe4p8Yyd2UcnMHQz1MbQ6_tjC5kTp6decSLGV9tJhsIYh0m9YYhOTjxsaUUYG0rBuhQ"
   attributes: {sub: '00ufomm9ifec2ySL55d7', name: 'Zeljko Stojkovic', email: 'test@gmail.com', ver: 1, iss: 'https://dev-80556277.okta.com/oauth2/default', …}
   username: "Zeljko Stojkovic"
