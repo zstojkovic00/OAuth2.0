@@ -91,7 +91,7 @@ public class OktaController {
 
             List<Exam> exams = this.restClient.get()
                     .uri("http://localhost:8081/exams?userId")
-                    .header("authorization", "Bearer " + accessToken)
+                    .header("Authorization", "Bearer " + accessToken)
                     .accept(MediaType.APPLICATION_JSON)
                     .retrieve()
                     .body(new ParameterizedTypeReference<>() {});

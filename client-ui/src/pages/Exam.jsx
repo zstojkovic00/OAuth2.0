@@ -50,16 +50,22 @@ const Exam = () => {
                     </tr>
                     </thead>
                     <tbody>
-                    {exams.map((exam, index) => (
-                        <tr key={index}>
-                            <td>{exam.code}</td>
-                            <td>{exam.name}</td>
-                            <td>{exam.points}</td>
-                            <td>{exam.grade}</td>
-                            <td>{exam.date}</td>
-                            <td>{exam.professor}</td>
+                    {exams.length > 0 ? (
+                        exams.map((exam, index) => (
+                            <tr key={index}>
+                                <td>{exam.code}</td>
+                                <td>{exam.name}</td>
+                                <td>{exam.points}</td>
+                                <td>{exam.grade}</td>
+                                <td>{exam.date}</td>
+                                <td>{exam.professor}</td>
+                            </tr>
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan="6">No exams found</td>
                         </tr>
-                    ))}
+                    )}
                     </tbody>
                 </table>
             </div>

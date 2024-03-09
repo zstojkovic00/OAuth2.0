@@ -3,7 +3,7 @@ import axios from "axios";
 
 const Home = () => {
     const clientId = process.env.REACT_APP_CLIENT_ID;
-    const loginUri = `https://dev-80556277.okta.com/oauth2/default/v1/authorize?redirect_uri=http://localhost:3000&response_type=code&state=12345&scope=openid email profile&client_id=${clientId}`;
+    const loginUri = `https://dev-80556277.okta.com/oauth2/default/v1/authorize?redirect_uri=http://localhost:3000&response_type=code&state=12345&scope=openid email profile singidunum.read&client_id=${clientId}`;
     const [user, setUser] = useState(null);
 
     useEffect(() => {
